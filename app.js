@@ -38,7 +38,7 @@ http.createServer((req, res) => {
 
 		<input type='submit' name='form_ticker' value='Submit'>
 	`);
-	res.end();			
+// 	res.end();			
    
   } else if (req.url == '/result') {
 	res.write ("Process the form<br>");
@@ -64,9 +64,10 @@ http.createServer((req, res) => {
 
            await connect_table();
 
-	  res.end();
+// 	  res.end();
 
   }
+	res.end();
 }).listen(port);
 
 async function connect_table() {
