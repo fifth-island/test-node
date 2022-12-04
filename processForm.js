@@ -18,6 +18,7 @@ app.get('/', (req, res) => {
 })
 
 app.post('/process', (req, res) => {
+    res.write("Process is open");
     var query = req.body.query;
     var queryType = req.body.queryType;
     const queryObj = {[queryType]: query};
