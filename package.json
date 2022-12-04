@@ -1,5 +1,5 @@
 {
-  "name": "comp20-stockticker-p2",
+  "name": "test-node",
   "version": "1.0.0",
   "description": "",
   "main": "processForm.js",
@@ -36,12 +36,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jweng1011/comp20-stockTicker-p2.git"
+    "url": "git+https://github.com/fifth-island/test-node/"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/jweng1011/comp20-stockTicker-p2/issues"
+    "url": "https://github.com/fifth-island/test-node/"
   },
-  "homepage": "https://github.com/jweng1011/comp20-stockTicker-p2#readme"
+  "homepage": "https://github.com/fifth-island/test-node/"
 }
