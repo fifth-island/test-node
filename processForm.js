@@ -43,8 +43,8 @@ function parseData(dataArr) {
     } 
     dataArr.forEach((obj) => {
         console.log(obj);
-        var company = obj.Company;
-        var ticker = obj.Ticker;
+        var company = obj.name;
+        var ticker = obj.ticker;
         pdata += "<p>" 
         pdata += company;
         pdata += " ";
