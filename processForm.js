@@ -26,7 +26,7 @@ app.post('/process', (req, res) => {
         if (err) {
             throw err;
         }
-        var dbo = db.db("equities");
+        var dbo = db.db("stock");
         dbo.collection("equities").find(queryObj).toArray((err, result) => {
             if (err) throw err;
             res.send(parseData(result));
