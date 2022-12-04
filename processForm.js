@@ -20,7 +20,6 @@ app.get('/', (req, res) => {
 app.post('/process', (req, res) => {
     var query = req.body.query;
     var queryType = req.body.queryType;
-    res.write(queryType);
     const queryObj = {[queryType]: query};
     var MongoClient = mongodb.MongoClient;
     MongoClient.connect(uri, {useUnifiedTopology: true}, (err, db) => {
@@ -29,10 +28,10 @@ app.post('/process', (req, res) => {
         }
         var dbo = db.db("stock");
 //         dbo.collection("equities").find(queryObj).toArray((err, result) => {
-        dbo.collection("equities").find({}).toArray((err, result) => {
+//         dbo.collection("equities").find({}).toArray((err, result) => {
 
-            if (err) throw err;
-            res.send(parseData(result));
+//             if (err) throw err;
+//             res.send(parseData(result));
             db.close();
         });
     })
