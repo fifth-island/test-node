@@ -23,11 +23,11 @@ app.post('/process', (req, res) => {
     var queryType = req.body.queryType;
     const queryObj = {[queryType]: query};
     var MongoClient = mongodb.MongoClient;
-    MongoClient.connect(uri, {useUnifiedTopology: true}, (err, db) => {
-        if (err) {
-            throw err;
-        }
-        var dbo = db.db("stock");
+//     MongoClient.connect(uri, {useUnifiedTopology: true}, (err, db) => {
+//         if (err) {
+//             throw err;
+//         }
+//         var dbo = db.db("stock");
 //         dbo.collection("equities").find(queryObj).toArray((err, result) => {
 //         dbo.collection("equities").find({}).toArray((err, result) => {
 
@@ -35,7 +35,7 @@ app.post('/process', (req, res) => {
 //             res.send(parseData(result));
 //             db.close();
 //         });
-    })
+//     })
 })
 
 function parseData(dataArr) {
