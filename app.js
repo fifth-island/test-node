@@ -5,7 +5,7 @@ var __dirname = path.resolve();
 
 const mongodb = require('mongodb');
 
-const uri = process.env.MONGODB_URI || "mongodb+srv://jenniferw:Wsnx1c9J0sKO6sO3@equities.smk0n2x.mongodb.net/?retryWrites=true&w=majority";
+const uri = process.env.MONGODB_URI || "mongodb+srv://fifth_island:comp20@cluster0.wqsv4y9.mongodb.net/?retryWrites=true&w=majority";
 
 var app = express();
 const port = process.env.PORT || 4000;
@@ -43,8 +43,8 @@ function parseData(dataArr) {
     } 
     dataArr.forEach((obj) => {
         console.log(obj);
-        var company = obj.Company;
-        var ticker = obj.Ticker;
+        var company = obj.name;
+        var ticker = obj.ticker;
         pdata += "<p>" 
         pdata += company;
         pdata += " ";
