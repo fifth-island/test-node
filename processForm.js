@@ -19,10 +19,10 @@ app.get('/', (req, res) => {
 
 app.post('/process', (req, res) => {
     res.write("Process is open");
-    var query = req.body.query;
-    var queryType = req.body.queryType;
-    const queryObj = {[queryType]: query};
-    var MongoClient = mongodb.MongoClient;
+//     var query = req.body.query;
+//     var queryType = req.body.queryType;
+//     const queryObj = {[queryType]: query};
+//     var MongoClient = mongodb.MongoClient;
 //     MongoClient.connect(uri, {useUnifiedTopology: true}, (err, db) => {
 //         if (err) {
 //             throw err;
