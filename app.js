@@ -1,109 +1,57 @@
-var http = require('http');
-var qs = require('querystring');
-var url = require('url');
+const express = require("express");
+const bodyParser = require("body-parser");
+var path = require('path');
+var __dirname = path.resolve();
 
+const mongodb = require('mongodb');
 
-const MongoClient = require('mongodb').MongoClient;
-const uri = "mongodb+srv://fifth_island:comp20@cluster0.wqsv4y9.mongodb.net/?retryWrites=true&w=majority";
+const uri = process.env.MONGODB_URI || "mongodb+srv://jenniferw:Wsnx1c9J0sKO6sO3@equities.smk0n2x.mongodb.net/?retryWrites=true&w=majority";
 
-const client =new MongoClient(uri,{ useUnifiedTopology: true });
+var app = express();
+const port = process.env.PORT || 4000;
 
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static(path.join(__dirname, 'public')))
 
-var port = process.env.PORT || 3000;
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '/index.html'));
+})
 
-var user_value = "";
-var type_value = "";
+app.post('/process', (req, res) => {
+    var query = req.body.query;
+    var queryType = req.body.queryType;
+    const queryObj = {[queryType]: query};
+    var MongoClient = mongodb.MongoClient;
+    MongoClient.connect(uri, {useUnifiedTopology: true}, (err, db) => {
+        if (err) {
+            throw err;
+        }
+        var dbo = db.db("equities");
+        dbo.collection("equities").find(queryObj).toArray((err, result) => {
+            if (err) throw err;
+            res.send(parseData(result));
+            db.close();
+        });
+    })
+})
 
-http.createServer(async function (req, res) => {
-  res.writeHead(200, {'Content-Type':'text/html'});
-  if (req.url == "/") {
-	res.write(`
-		<h1>Hi! This is the home page</h1>
-		<form action="/result" target="_blank" method="POST">
-		<h2> Welcome to our Stock Ticker. </h2>
-
-		<p> Select what type of input you want to use in the search </p>
-
-		<label>Company</label>
-		<input type='radio' name='type_input' id="company_name" value="company">
-
-		<label>Ticker</label>
-		<input type='radio' name='type_input' id="company_ticker" value="ticker">
-
-		<p> Now, provide a word to check in our database </p>
-
-		<label> Search for keyword: </label>
-		<input type='text' name='user_input'>
-
-
-		<input type='submit' name='form_ticker' value='Submit'>
-	`);
-// 	res.end();			
-   
-  } else if (req.url == '/result') {
-	res.write ("Process the form<br>");
-	
-
-	pdata = "";
-	req.on('data', data => {
-		pdata += data.toString();
-	});
-
-	// when complete POST data is received
-	req.on('end', () => {
-		pdata = qs.parse(pdata);
-		res.write ("The type chosen is: " + pdata['type_input'] + "<br>");
-		type_value = pdata['type_input'];
-		res.write ("The name is: " + pdata['user_input']);
-		user_value = pdata['user_input'];	
-		
-	  
-	  
-
-	});
-
-//            await connect_table();
-
-// 	  res.end();
-	res.end();
-
-  }
-}).listen(port);
-
-async function connect_table() {
- try {
-  res.write("Checkpoint 0");
- 
-  await client.connect();
-  var dbo = client.db("stock");
-  
-  res.write("Checkpoint 1");
-  var collection = dbo.collection("equities");
-  const options = {
-   projection: { _id: 0, name: 1, ticker: 1 },
-  };
-  
-  res.write("Checkpoint 2");
-
-  const curs = await collection.find({}, options);
-
-  if ((curs.count()) === 0 ) {
-   res.write("No documents found!");
-  }
-
-  await curs.forEach(function(item){
-   if(type_value == 'company') {
-    res.write("Your type_value is equal company");
-   }
-
-
-  });
-
-
- } catch (err) {
-	 res.write("Error found");
-	}
-	finally {
-		client.close();
-	}
+function parseData(dataArr) {
+    var pdata = "";
+    if (dataArr.length === 0) {
+        pdata = "<p>No documents found!</p>";
+        return pdata;
+    } 
+    dataArr.forEach((obj) => {
+        console.log(obj);
+        var company = obj.Company;
+        var ticker = obj.Ticker;
+        pdata += "<p>" 
+        pdata += company;
+        pdata += " ";
+        pdata += ticker;
+        pdata += "</p>";
+    })
+    return pdata;
 }
+
+app.listen(port);
