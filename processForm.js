@@ -20,6 +20,7 @@ app.get('/', (req, res) => {
 app.post('/process', (req, res) => {
     var query = req.body.query;
     var queryType = req.body.queryType;
+    res.write(queryType);
     const queryObj = {[queryType]: query};
     var MongoClient = mongodb.MongoClient;
     MongoClient.connect(uri, {useUnifiedTopology: true}, (err, db) => {
