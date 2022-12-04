@@ -32,8 +32,8 @@ app.post('/process', (req, res) => {
 
 //             if (err) throw err;
 //             res.send(parseData(result));
-            db.close();
-        });
+//             db.close();
+//         });
     })
 })
 
