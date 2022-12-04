@@ -1,57 +1,27 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-var path = require('path');
-var __dirname = path.resolve();
+const { resolveSoa } = require('dns');
+const http = require('http');
+const address = require('url');
 
-const mongodb = require('mongodb');
+http.createServer((req, res) => {
+    var header = '';
+    var form = '';
+    header = '<!DOCTYPE html>' + '<html> <head> </head>';
+    form = '<body style="background-color:beige"><div style="text-align:center"> ' + '<h1 style="border-bottom: 1px solid black; padding-bottom: 15px">Stock Ticker</h1>'
+    +'<form action="#" method="GET"> <label for="#">Search Bar <span style="color:red">*</span>:</label>'
+        + '<input type="text" placeholder="Company Name or Symbol" name="search_bar">'
+        + '<br> <br> ' + '<input type="radio" name="btns_name" id="comp_name">' + '<label for="comp_name">Company Name</label>'
+        + '<input type="radio" name="btns_ticker" id="comp_symbol"> <label for="comp_symbol">Stock Ticker</label>'
+        + '<br> <br> <input type="submit" name="submit_btn"> </form> </div>';
+    
+    var page = header + form;
+    var qobj = address.parse(req.url, true).query
+    res.writeHead(200, {'Content-Type': 'text/html', 'Content-Lenght': ''});
+    res.write(page);
+    
+    if (qobj.submit_bnt === 'Submit') {
+//         pro = clicker(req);
+        res.write("End of test");
+    }
 
-const uri = process.env.MONGODB_URI || "mongodb+srv://fifth_island:comp20@cluster0.wqsv4y9.mongodb.net/?retryWrites=true&w=majority";
 
-var app = express();
-const port = process.env.PORT || 4000;
-
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.static(path.join(__dirname, 'public')))
-
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/index.html'));
-})
-
-app.post('/process', (req, res) => {
-    var query = req.body.query;
-    var queryType = req.body.queryType;
-    const queryObj = {[queryType]: query};
-    var MongoClient = mongodb.MongoClient;
-    MongoClient.connect(uri, {useUnifiedTopology: true}, (err, db) => {
-        if (err) {
-            throw err;
-        }
-        var dbo = db.db("equities");
-        dbo.collection("equities").find(queryObj).toArray((err, result) => {
-            if (err) throw err;
-            res.send(parseData(result));
-            db.close();
-        });
-    })
-})
-
-function parseData(dataArr) {
-    var pdata = "";
-    if (dataArr.length === 0) {
-        pdata = "<p>No documents found!</p>";
-        return pdata;
-    } 
-    dataArr.forEach((obj) => {
-        console.log(obj);
-        var company = obj.name;
-        var ticker = obj.ticker;
-        pdata += "<p>" 
-        pdata += company;
-        pdata += " ";
-        pdata += ticker;
-        pdata += "</p>";
-    })
-    return pdata;
-}
-
-app.listen(port);
+}).listen(8080);
