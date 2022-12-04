@@ -1,40 +1,57 @@
-var http = require('http');
-var qs = require('querystring');
+const express = require("express");
+const bodyParser = require("body-parser");
+var path = require('path');
+var __dirname = path.resolve();
 
+const mongodb = require('mongodb');
 
-const MongoClient = require('mongodb').MongoClient;
-const url = "mongodb+srv://fifth_island:comp20@cluster0.wqsv4y9.mongodb.net/?retryWrites=true&w=majority";
+const uri = process.env.MONGODB_URI || "mongodb+srv://fifth_island:comp20@cluster0.wqsv4y9.mongodb.net/?retryWrites=true&w=majority";
 
-const client =new MongoClient(url,{ useUnifiedTopology: true });
+var app = express();
+const port = process.env.PORT || 4000;
 
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static(path.join(__dirname, 'public')))
 
-var port = process.env.PORT || 3000;
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '/index.html'));
+})
 
-var user_value = "";
-var type_value = "";
+app.post('/process', (req, res) => {
+    var query = req.body.query;
+    var queryType = req.body.queryType;
+    const queryObj = {[queryType]: query};
+    var MongoClient = mongodb.MongoClient;
+    MongoClient.connect(uri, {useUnifiedTopology: true}, (err, db) => {
+        if (err) {
+            throw err;
+        }
+        var dbo = db.db("stock");
+        dbo.collection("equities").find(queryObj).toArray((err, result) => {
+            if (err) throw err;
+            res.send(parseData(result));
+            db.close();
+        });
+    })
+})
 
-http.createServer(async function (req, res) {
- 
-    var header = '<!DOCTYPE html>' + '<html> <head> </head>';
-    var form = '<body style="background-color:beige"><div style="text-align:center"> ' + '<h1 style="border-bottom: 1px solid black; padding-bottom: 15px">Stock Ticker</h1>'
-    +'<form action="#" method="GET"> <label for="#">Search Bar <span style="color:red">*</span>:</label>'
-        + '<input type="text" placeholder="Company Name or Symbol" name="search_bar">'
-        + '<br> <br> ' + '<input type="radio" name="btns_name" id="comp_name">' + '<label for="comp_name">Company Name</label>'
-        + '<input type="radio" name="btns_ticker" id="comp_symbol"> <label for="comp_symbol">Stock Ticker</label>'
-        + '<br> <br> <input type="submit" name="submit_btn"> </form> </div>';
-    
-    var page = header + form;
-    var qobj = address.parse(req.url, true).query
+function parseData(dataArr) {
+    var pdata = "";
+    if (dataArr.length === 0) {
+        pdata = "<p>No documents found!</p>";
+        return pdata;
+    } 
+    dataArr.forEach((obj) => {
+        console.log(obj);
+        var company = obj.name;
+        var ticker = obj.ticker;
+        pdata += "<p>" 
+        pdata += company;
+        pdata += " ";
+        pdata += ticker;
+        pdata += "</p>";
+    })
+    return pdata;
+}
 
-    res.writeHead(200, {'Content-Type': 'text/html', 'Content-Length': ''});
-
-    res.write(page);
-
-    if (qobj.submit_btn === 'Submit') {
-      res.write("Successful submission");
-    }
-
-    print();
-
-}).listen(port);
-
+app.listen(port);
